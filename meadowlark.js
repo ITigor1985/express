@@ -1,5 +1,6 @@
 const express = require("express");
 const { engine } = require("express-handlebars");
+const handlers = require("./lib/handlers");
 const fortune = require("./lib/fortune");
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,19 +14,11 @@ app.engine(
 app.set("view engine", "handlebars");
 app.use(express.static(__dirname + "/public"));
 
-app.get("/", (req, res) => res.render("home"));
-app.get("/about", (req, res) => {
-  res.render("about", { fortune: fortune.getFortune() });
-});
-app.use((req, res) => {
-  res.status(404);
-  res.render("404");
-});
-app.use((err, req, res, next) => {
-  console.error(err.message);
-  res.status(500);
-  res.render("500");
-});
+app.get("/", handlers.home);
+app.get("/about", handlers.about);
+app.use(handlers.notFound);
+app.use(handlers.serverError);
+
 app.listen(port, () =>
   console.log(
     `Express запущен на http://localhost:${port}; ` +
