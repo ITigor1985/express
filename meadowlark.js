@@ -1,7 +1,6 @@
 const express = require("express");
 const { engine } = require("express-handlebars");
 const handlers = require("./lib/handlers");
-const fortune = require("./lib/fortune");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -19,9 +18,13 @@ app.get("/about", handlers.about);
 app.use(handlers.notFound);
 app.use(handlers.serverError);
 
-app.listen(port, () =>
-  console.log(
-    `Express запущен на http://localhost:${port}; ` +
-      `нажмите Ctrl+C для завершения.`
-  )
-);
+if (require.main === module) {
+  app.listen(port, () =>
+    console.log(
+      `Express запущен на http://localhost:${port}; ` +
+        `нажмите Ctrl+C для завершения.`
+    )
+  );
+} else {
+  module.exports = app;
+}
